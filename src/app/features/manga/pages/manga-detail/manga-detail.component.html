@@ -1,0 +1,76 @@
+<div class="manga-detail">
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!isLoading && manga">
+    <div class="manga-header">
+      <div class="cover-container">
+        <img [src]="manga.cover" [alt]="manga.title" class="manga-cover" (error)="onImageError($event)">
+      </div>
+      <div class="manga-info">
+        <h1 class="title">{{ manga.title }}</h1>
+        <div class="metadata">
+          <div class="rating">
+            <mat-icon>star</mat-icon>
+            <span>{{ manga.rating }}</span>
+          </div>
+          <div class="status">{{ manga.status }}</div>
+        </div>
+        <div class="genres">
+          <span class="genre" *ngFor="let genre of manga.genres">{{ genre }}</span>
+        </div>
+        <div class="creator-info">
+          <div class="info-item">
+            <span class="label">Author:</span>
+            <span class="value">{{ manga.author }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Artist:</span>
+            <span class="value">{{ manga.artist }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Released:</span>
+            <span class="value">{{ manga.releaseYear }}</span>
+          </div>
+        </div>
+        <p class="summary">{{ manga.summary }}</p>
+        <div class="actions">
+          <button mat-raised-button color="primary">
+            <mat-icon>bookmark</mat-icon>
+            Add to Library
+          </button>
+          <button mat-raised-button>
+            <mat-icon>share</mat-icon>
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapters-section">
+      <h2>Chapters</h2>
+      <div class="chapters-list">
+        <div class="chapter-item" *ngFor="let chapter of manga.chapters">
+          <div class="chapter-info">
+            <span class="chapter-number">{{ chapter.number }}</span>
+            <span class="chapter-title">{{ chapter.title }}</span>
+          </div>
+          <div class="chapter-meta">
+            <span class="release-date">{{ chapter.releaseDate }}</span>
+            <button mat-icon-button>
+              <mat-icon>bookmark_border</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div> 

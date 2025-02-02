@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './layout/header/header.component';
+import { HeaderComponent } from './core/components/header/header.component';
 
 @Component({
   selector: 'app-root',
@@ -8,14 +8,13 @@ import { HeaderComponent } from './layout/header/header.component';
   imports: [RouterOutlet, HeaderComponent],
   template: `
     <app-header></app-header>
-    <main>
-      <router-outlet></router-outlet>
-    </main>
+    <router-outlet></router-outlet>
   `,
   styles: [`
-    main {
+    :host {
+      display: block;
       min-height: 100vh;
-      background-color: #1a1a1a;
+      background-color: #111111;
     }
   `]
 })

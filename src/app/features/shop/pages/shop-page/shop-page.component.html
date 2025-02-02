@@ -1,1 +1,144 @@
-<p>shop-page works!</p>
+<div class="shop-page">
+  <!-- Filters Section -->
+  <aside class="filters-section">
+    <h2>Filters</h2>
+    
+    <div class="filter-group">
+      <h3>Product Type</h3>
+      <mat-checkbox *ngFor="let type of productTypes"
+                   [checked]="selectedType === type"
+                   (change)="onTypeChange(type)">
+        {{ type | titlecase }}
+      </mat-checkbox>
+    </div>
+
+    <div class="filter-group">
+      <h3>Categories</h3>
+      <mat-checkbox *ngFor="let category of categories"
+                   [checked]="selectedCategory === category"
+                   (change)="onCategoryChange(category)">
+        {{ category }}
+      </mat-checkbox>
+    </div>
+
+    <div class="filter-group">
+      <h3>Price Range</h3>
+      <div class="price-inputs">
+        <mat-form-field appearance="outline">
+          <mat-label>Min</mat-label>
+          <input matInput type="number" [(ngModel)]="minPrice" (change)="applyFilters()">
+        </mat-form-field>
+        <span>-</span>
+        <mat-form-field appearance="outline">
+          <mat-label>Max</mat-label>
+          <input matInput type="number" [(ngModel)]="maxPrice" (change)="applyFilters()">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h3>Availability</h3>
+      <mat-checkbox [(ngModel)]="inStockOnly" (change)="applyFilters()">
+        In Stock Only
+      </mat-checkbox>
+    </div>
+
+    <button mat-stroked-button color="accent" (click)="resetFilters()">
+      Reset Filters
+    </button>
+  </aside>
+
+  <!-- Products Section -->
+  <main class="products-section">
+    <div class="products-header">
+      <div class="results-info">
+        {{ productsData?.total || 0 }} Products found
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Sort By</mat-label>
+        <mat-select [(ngModel)]="sortBy" (selectionChange)="applyFilters()">
+          <mat-option value="newest">Newest Arrivals</mat-option>
+          <mat-option value="price-low">Price: Low to High</mat-option>
+          <mat-option value="price-high">Price: High to Low</mat-option>
+          <mat-option value="rating">Highest Rated</mat-option>
+          <mat-option value="popularity">Most Popular</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" *ngIf="!isLoading">
+      <mat-card class="product-card" *ngFor="let product of productsData?.items">
+        <div class="product-image">
+          <img [src]="product.image" [alt]="product.title" [id]="'product-' + product.id">
+          <div class="product-badges">
+            <span class="discount-badge" *ngIf="product.discountPrice">
+              -{{ ((product.price - product.discountPrice) / product.price * 100) | number:'1.0-0' }}%
+            </span>
+            <span class="out-of-stock-badge" *ngIf="!product.inStock">
+              Out of Stock
+            </span>
+          </div>
+        </div>
+
+        <mat-card-content>
+          <h3 class="product-title">{{ product.title }}</h3>
+          
+          <div class="product-info">
+            <div class="rating">
+              <mat-icon class="star">star</mat-icon>
+              <span>{{ product.rating }}</span>
+              <span class="reviews">({{ product.reviews }})</span>
+            </div>
+            <div class="price">
+              <span class="original-price" [class.has-discount]="product.discountPrice">
+                ${{ product.price }}
+              </span>
+              <span class="discount-price" *ngIf="product.discountPrice">
+                ${{ product.discountPrice }}
+              </span>
+            </div>
+          </div>
+
+          <div class="product-meta">
+            <span class="publisher">{{ product.publisher }}</span>
+            <span class="format">{{ product.format }}</span>
+          </div>
+
+          <p class="description">{{ product.description }}</p>
+
+          <div class="categories">
+            <mat-chip-set>
+              <mat-chip *ngFor="let cat of product.category">{{ cat }}</mat-chip>
+            </mat-chip-set>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" [disabled]="!product.inStock">
+            <mat-icon>shopping_cart</mat-icon>
+            {{ product.inStock ? 'Add to Cart' : 'Out of Stock' }}
+          </button>
+          <button mat-icon-button color="accent">
+            <mat-icon>favorite_border</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Pagination -->
+    <mat-paginator
+      [length]="productsData?.total || 0"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPageChange($event)"
+      *ngIf="productsData?.total">
+    </mat-paginator>
+  </main>
+</div>

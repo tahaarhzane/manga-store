@@ -7,6 +7,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideHttpClient } from '@angular/common/http';
 
 import { routes } from './app.routes';
+import { MangaService } from './core/services/manga.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
       trace: false,
       traceLimit: 75,
     }),
-    provideHttpClient()
+    provideHttpClient(),
+    MangaService
   ]
 };
