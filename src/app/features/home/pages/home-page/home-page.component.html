@@ -1,0 +1,85 @@
+<div class="home-page">
+  <!-- Featured Manga Slider -->
+  <section class="featured-section">
+    <div class="slider-container">
+      <div class="slides" [style.transform]="'translateX(-' + (currentSlideIndex * 100) + '%)'">
+        <div class="slide" *ngFor="let manga of featuredManga">
+          <div class="slide-content">
+            <div class="slide-info">
+              <h1>{{ manga.title }}</h1>
+              <div class="rating">
+                <mat-icon *ngFor="let star of getRatingStars(manga.rating)">star</mat-icon>
+                <span>{{ manga.rating }}/5</span>
+              </div>
+              <div class="categories">
+                <mat-chip-set>
+                  <mat-chip *ngFor="let category of manga.categories">
+                    {{ category }}
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+              <p class="price">${{ manga.price }}</p>
+              <button mat-raised-button color="primary">Add to Cart</button>
+            </div>
+            <div class="slide-image">
+              <img [src]="manga.cover" [alt]="manga.title" (error)="onImageError($event)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slider Navigation -->
+      <button class="nav-button prev" (click)="previousSlide()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button class="nav-button next" (click)="nextSlide()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+
+      <!-- Slider Dots -->
+      <div class="slider-controls">
+        <button *ngFor="let manga of featuredManga; let i = index"
+                class="slider-dot"
+                [class.active]="i === currentSlideIndex"
+                (click)="selectSlide(i)">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trending Now Section -->
+  <section class="trending-section">
+    <div class="container">
+      <h2>Trending Now</h2>
+      <div class="manga-grid">
+        <mat-card class="manga-card" *ngFor="let manga of trendingManga">
+          <img mat-card-image [src]="manga.cover" [alt]="manga.title" (error)="onImageError($event)">
+          <mat-card-content>
+            <h3>{{ manga.title }}</h3>
+            <div class="rating">
+              <mat-icon *ngFor="let star of getRatingStars(manga.rating)">star</mat-icon>
+              <span>{{ manga.rating }}/5</span>
+            </div>
+            <div class="categories">
+              <mat-chip-set>
+                <mat-chip *ngFor="let category of manga.categories">
+                  {{ category }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+            <p class="price">${{ manga.price }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button color="primary">
+              <mat-icon>shopping_cart</mat-icon>
+              Add to Cart
+            </button>
+            <button mat-button>
+              <mat-icon>favorite_border</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+</div>

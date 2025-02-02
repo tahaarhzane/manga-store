@@ -1,0 +1,61 @@
+<nav class="header">
+  <div class="header-content">
+    <!-- Left Section -->
+    <div class="left-section">
+      <button mat-button [matMenuTriggerFor]="menu" class="menu-button">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" class="dark-menu">
+        <a mat-menu-item routerLink="/home">
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </a>
+        <a mat-menu-item routerLink="/shop">
+          <mat-icon>store</mat-icon>
+          <span>Shop</span>
+        </a>
+        <a mat-menu-item routerLink="/genres">
+          <mat-icon>category</mat-icon>
+          <span>Genres</span>
+        </a>
+        <a mat-menu-item routerLink="/new-releases">
+          <mat-icon>new_releases</mat-icon>
+          <span>New Releases</span>
+        </a>
+        <a mat-menu-item routerLink="/trending">
+          <mat-icon>trending_up</mat-icon>
+          <span>Trending</span>
+        </a>
+      </mat-menu>
+      <a class="logo" routerLink="/">
+        <span class="number">9</span>Anime
+      </a>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <input type="text" placeholder="Enter anime name" [(ngModel)]="searchQuery">
+        <button class="search-button">
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-section">
+      <div class="social-links">
+        <a href="#" class="social-link">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-telegram-plane"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-reddit-alien"></i>
+        </a>
+      </div>
+      <button class="sign-in-button">Sign in</button>
+    </div>
+  </div>
+</nav>
