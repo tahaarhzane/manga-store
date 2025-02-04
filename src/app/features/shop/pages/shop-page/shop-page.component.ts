@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ShopService, Product, PaginatedProducts } from '../../../../core/services/shop.service';
 
 @Component({
@@ -41,9 +41,9 @@ import { ShopService, Product, PaginatedProducts } from '../../../../core/servic
 })
 export class ShopPageComponent implements OnInit {
   @ViewChild('productsSection') productsSection!: ElementRef;
+  
   productsData?: PaginatedProducts;
   categories: string[] = [];
-  productTypes: ('manga' | 'merchandise')[] = ['manga', 'merchandise'];
   isLoading = true;
 
   // Pagination
@@ -51,58 +51,39 @@ export class ShopPageComponent implements OnInit {
   pageSize = 12;
 
   // Filters
-  selectedType: 'manga' | 'merchandise' | '' = '';
   selectedCategory = '';
+  selectedType = '';
+  productTypes = ['manga', 'merchandise'];
   minPrice?: number;
   maxPrice?: number;
   inStockOnly = false;
-  sortBy = 'newest';
+  sortBy = 'title';
+  maxPriceValue: number = 100;
+  priceRange: number[] = [0, 100];
+  searchQuery?: string;
 
-  constructor(private shopService: ShopService) {}
+  constructor(
+    private shopService: ShopService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.searchQuery = params['search'];
+      this.loadProducts();
+    });
+    this.loadMaxPrice();
     this.loadCategories();
-    this.loadProducts();
   }
 
-  private loadCategories(): void {
-    this.shopService.getCategories().subscribe(categories => {
-      this.categories = categories;
-    });
-  }
-
-  private loadProducts(): void {
-    this.isLoading = true;
-    this.shopService.getProducts(
-      this.currentPage,
-      this.pageSize,
-      this.sortBy,
-      {
-        type: this.selectedType || undefined,
-        category: this.selectedCategory || undefined,
-        inStock: this.inStockOnly || undefined,
-        minPrice: this.minPrice,
-        maxPrice: this.maxPrice
-      }
-    ).subscribe(data => {
-      this.productsData = data;
-      this.isLoading = false;
-    });
-  }
-
-  onPageChange(event: PageEvent): void {
-    this.currentPage = event.pageIndex + 1;
-    this.pageSize = event.pageSize;
-    this.loadProducts();
-  }
-
-  onTypeChange(type: 'manga' | 'merchandise'): void {
+  onTypeChange(type: string): void {
     this.selectedType = this.selectedType === type ? '' : type;
     this.currentPage = 1;
     this.loadProducts();
   }
 
   onCategoryChange(category: string): void {
+    console.log('Category clicked:', category);
     this.selectedCategory = this.selectedCategory === category ? '' : category;
     this.currentPage = 1;
     this.loadProducts();
@@ -119,31 +100,79 @@ export class ShopPageComponent implements OnInit {
     this.minPrice = undefined;
     this.maxPrice = undefined;
     this.inStockOnly = false;
-    this.sortBy = 'newest';
+    this.sortBy = 'title';
     this.currentPage = 1;
     this.loadProducts();
   }
 
-  getUniquePublishers(): number {
-    return new Set(this.productsData?.items.map(product => product.publisher)).size || 0;
+  private loadCategories(): void {
+    this.shopService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        console.log('Loaded categories:', categories);
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
+    });
   }
 
-  getInStockCount(): number {
-    return this.productsData?.items.filter(product => product.inStock).length || 0;
+  onPageChange(event: PageEvent): void {
+    this.currentPage = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.loadProducts();
   }
 
-  getFeaturedProducts(): Product[] {
-    return (this.productsData?.items || [])
-      .filter(product => product.discountPrice)
-      .sort((a, b) => {
-        const discountA = ((a.price - (a.discountPrice || 0)) / a.price) * 100;
-        const discountB = ((b.price - (b.discountPrice || 0)) / b.price) * 100;
-        return discountB - discountA;
-      })
-      .slice(0, 3);
+  private loadProducts(): void {
+    this.isLoading = true;
+    const filters = {
+      type: this.selectedType || undefined,
+      category: this.selectedCategory || undefined,
+      inStock: this.inStockOnly || undefined,
+      minPrice: this.minPrice,
+      maxPrice: this.maxPrice,
+      search: this.searchQuery // Add search query to filters
+    };
+    
+    console.log('Loading products with filters:', filters);
+    
+    this.shopService.getProducts(
+      this.currentPage,
+      this.pageSize,
+      this.sortBy,
+      filters,
+      this.searchQuery
+    ).subscribe({
+      next: (data) => {
+        console.log('Received data:', data);
+        this.productsData = data;
+        this.isLoading = false;
+        if (this.productsSection) {
+          this.productsSection.nativeElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      },
+      error: (error) => {
+        console.error('Error loading products:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
-  scrollToProducts(): void {
-    this.productsSection?.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  private loadMaxPrice(): void {
+    this.shopService.getMaxPrice().subscribe({
+      next: (maxPrice) => {
+        this.maxPriceValue = maxPrice;
+        this.priceRange = [0, maxPrice];
+      },
+      error: (error) => {
+        console.error('Error loading max price:', error);
+      }
+    });
+  }
+
+  onPriceRangeChange(): void {
+    this.minPrice = this.priceRange[0];
+    this.maxPrice = this.priceRange[1];
+    this.applyFilters();
   }
 }

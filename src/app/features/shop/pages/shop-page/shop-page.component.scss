@@ -95,6 +95,90 @@
   }
 }
 
+.price-range {
+  padding: 0 1rem;
+  margin-bottom: 1.5rem;
+
+  .price-values {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    
+    span {
+      color: #ffffff;
+      font-size: 0.9rem;
+      background: rgba(102, 0, 255, 0.15);
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+  }
+
+  .price-slider {
+    width: 100%;
+    margin: 0;
+    min-height: 48px; // Added to increase touch area
+    padding: 0 8px; // Added padding for thumbs
+
+    ::ng-deep {
+      .mdc-slider {
+        width: 100%;
+      }
+
+      // Track styles - made longer
+      .mdc-slider__track--active {
+        height: 4px;
+        background: linear-gradient(90deg, #6600ff, #7f1fff);
+        border-radius: 2px;
+      }
+
+      .mdc-slider__track--inactive {
+        height: 4px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+      }
+
+      // Remove thumb container background
+      .mat-mdc-slider-visual-thumb {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      // Thumb styles
+      .mdc-slider__thumb {
+        background-color: #6600ff;
+        border: 2px solid #ffffff;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: scale(1.2);
+          background-color: #7f1fff;
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+
+      // Remove focus outlines
+      .mat-mdc-focus-indicator {
+        display: none;
+      }
+
+      // Value indicator styling
+      .mdc-slider__value-indicator {
+        background-color: #6600ff;
+        color: #ffffff;
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
 .products-section {
   .products-header {
     display: flex;

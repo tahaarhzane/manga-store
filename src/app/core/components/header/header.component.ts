@@ -45,12 +45,15 @@ import { Subject } from 'rxjs';
         </div>
         
         <div class="search-section">
-          <div class="search-bar">
-            <mat-icon>search</mat-icon>
-            <input type="text"
-                   placeholder="Search manga..."
-                   [(ngModel)]="searchQuery"
-                   (input)="onSearchInput()">
+          <div class="search-container">
+            <input 
+              type="text" 
+              placeholder="Search manga..." 
+              [(ngModel)]="searchQuery"
+              (keyup.enter)="onSearch()">
+            <button class="search-button" (click)="onSearch()">
+              <mat-icon>search</mat-icon>
+            </button>
           </div>
         </div>
 
@@ -150,7 +153,7 @@ import { Subject } from 'rxjs';
       max-width: 400px;
       margin: 0 2rem;
 
-      .search-bar {
+      .search-container {
         display: flex;
         align-items: center;
         background-color: rgba(255, 255, 255, 0.1);
@@ -160,11 +163,6 @@ import { Subject } from 'rxjs';
 
         &:hover {
           background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        mat-icon {
-          color: rgba(255, 255, 255, 0.5);
-          margin-right: 0.5rem;
         }
 
         input {
@@ -177,6 +175,22 @@ import { Subject } from 'rxjs';
           padding: 0;
 
           &::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+          }
+        }
+
+        .search-button {
+          background: none;
+          border: none;
+          color: #ffffff;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          margin-left: 0.5rem;
+
+          mat-icon {
             color: rgba(255, 255, 255, 0.5);
           }
         }
@@ -243,9 +257,18 @@ export class HeaderComponent {
     });
   }
 
+  onSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/shop'], {
+        queryParams: { search: this.searchQuery.trim() }
+      });
+      this.searchQuery = ''; // Clear search after navigation
+    }
+  }
+
   logout(): void {
     // TODO: Implement logout functionality
     console.log('Logout clicked');
     this.isLoggedIn = false;
   }
-} 
+}

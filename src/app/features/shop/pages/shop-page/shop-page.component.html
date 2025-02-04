@@ -21,18 +21,29 @@
       </mat-checkbox>
     </div>
 
+    <!-- Replace the price range section -->
     <div class="filter-group">
       <h3>Price Range</h3>
-      <div class="price-inputs">
-        <mat-form-field appearance="outline">
-          <mat-label>Min</mat-label>
-          <input matInput type="number" [(ngModel)]="minPrice" (change)="applyFilters()">
-        </mat-form-field>
-        <span>-</span>
-        <mat-form-field appearance="outline">
-          <mat-label>Max</mat-label>
-          <input matInput type="number" [(ngModel)]="maxPrice" (change)="applyFilters()">
-        </mat-form-field>
+      <div class="price-range">
+        <div class="price-values">
+          <span>${{ priceRange[0] }}</span>
+          <span>${{ priceRange[1] }}</span>
+        </div>
+        <mat-slider 
+          [min]="0" 
+          [max]="maxPriceValue" 
+          [step]="1" 
+          [discrete]="true" 
+          class="custom-slider">
+          <input 
+            matSliderStartThumb 
+            [(ngModel)]="priceRange[0]" 
+            (change)="onPriceRangeChange()">
+          <input 
+            matSliderEndThumb 
+            [(ngModel)]="priceRange[1]" 
+            (change)="onPriceRangeChange()">
+        </mat-slider>
       </div>
     </div>
 
